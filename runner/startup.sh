@@ -3,13 +3,6 @@ source logger.sh
 
 RUNNER_ASSETS_DIR=${RUNNER_ASSETS_DIR:-/runnertmp}
 
-# Let GitHub runner execute these hooks. These environment variables are used by GitHub's Runner as described here
-# https://github.com/actions/runner/blob/main/docs/adrs/1751-runner-job-hooks.md
-# Scripts referenced in the ACTIONS_RUNNER_HOOK_ environment variables must end in .sh or .ps1
-# for it to become a valid hook script, otherwise GitHub will fail to run the hook
-export ACTIONS_RUNNER_HOOK_JOB_STARTED=/etc/arc/hooks/job-started.sh
-export ACTIONS_RUNNER_HOOK_JOB_COMPLETED=/etc/arc/hooks/job-completed.sh
-
 if [ -n "${STARTUP_DELAY_IN_SECONDS}" ]; then
   log.notice "Delaying startup by ${STARTUP_DELAY_IN_SECONDS} seconds"
   sleep "${STARTUP_DELAY_IN_SECONDS}"

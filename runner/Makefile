@@ -1,4 +1,4 @@
-DOCKER_USER ?= summerwind
+DOCKER_USER ?= rpenziol
 DOCKER ?= docker
 DEFAULT_RUNNER_NAME ?= ${DOCKER_USER}/actions-runner
 DIND_RUNNER_NAME ?= ${DOCKER_USER}/actions-runner-dind
@@ -6,7 +6,7 @@ DIND_ROOTLESS_RUNNER_NAME ?= ${DOCKER_USER}/actions-runner-dind-rootless
 OS_IMAGE ?= ubuntu-22.04
 TARGETPLATFORM ?= $(shell arch)
 
-RUNNER_VERSION ?= 2.303.0 
+RUNNER_VERSION ?= 2.303.0
 RUNNER_CONTAINER_HOOKS_VERSION ?= 0.2.0
 DOCKER_VERSION ?= 20.10.23
 

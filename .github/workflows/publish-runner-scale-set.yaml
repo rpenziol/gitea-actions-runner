@@ -29,14 +29,11 @@ on:
         type: boolean
         default: false
 
-env:
-  HELM_VERSION: v3.8.0
-
 permissions:
  packages: write
 
 jobs:
-  build-push-image: 
+  build-push-image:
     name: Build and push controller image
     runs-on: ubuntu-latest
     steps:
@@ -46,7 +43,7 @@ jobs:
           # If inputs.ref is empty, it'll resolve to the default branch
           ref: ${{ inputs.ref }}
 
-      - name: Resolve parameters 
+      - name: Resolve parameters
         id: resolve_parameters
         run: |
           resolvedRef="${{ inputs.ref }}"
@@ -67,7 +64,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           # Pinning v0.9.1 for Buildx and BuildKit v0.10.6
-          # BuildKit v0.11 which has a bug causing intermittent 
+          # BuildKit v0.11 which has a bug causing intermittent
           # failures pushing images to GHCR
           version: v0.9.1
           driver-opts: image=moby/buildkit:v0.10.6
@@ -102,100 +99,3 @@ jobs:
           echo "- Release tag: ${{ inputs.release_tag_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Push to registries: ${{ inputs.push_to_registries }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-
-  publish-helm-chart-gha-runner-scale-set-controller:
-    if: ${{ inputs.publish_gha_runner_scale_set_controller_chart == true }}
-    needs: build-push-image
-    name: Publish Helm chart for gha-runner-scale-set-controller
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          # If inputs.ref is empty, it'll resolve to the default branch
-          ref: ${{ inputs.ref }}
-
-      - name: Resolve parameters 
-        id: resolve_parameters
-        run: |
-          resolvedRef="${{ inputs.ref }}"
-          if [ -z "$resolvedRef" ]
-          then
-            resolvedRef="${{ github.ref }}"
-          fi
-          echo "INFO: Resolving short SHA for $resolvedRef"
-          echo "short_sha=$(git rev-parse --short $resolvedRef)" >> $GITHUB_OUTPUT
-          echo "INFO: Normalizing repository name (lowercase)"
-          echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT 
-
-      - name: Set up Helm
-        # Using https://github.com/Azure/setup-helm/releases/tag/v3.5
-        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78
-        with:
-          version: ${{ env.HELM_VERSION }}
-
-      - name: Publish new helm chart for gha-runner-scale-set-controller
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
-          GHA_RUNNER_SCALE_SET_CONTROLLER_CHART_VERSION_TAG=$(cat charts/gha-runner-scale-set-controller/Chart.yaml | grep version: | cut -d " " -f 2)
-          echo "GHA_RUNNER_SCALE_SET_CONTROLLER_CHART_VERSION_TAG=${GHA_RUNNER_SCALE_SET_CONTROLLER_CHART_VERSION_TAG}" >> $GITHUB_ENV
-          helm package charts/gha-runner-scale-set-controller/ --version="${GHA_RUNNER_SCALE_SET_CONTROLLER_CHART_VERSION_TAG}"
-          helm push gha-runner-scale-set-controller-"${GHA_RUNNER_SCALE_SET_CONTROLLER_CHART_VERSION_TAG}".tgz oci://ghcr.io/${{ steps.resolve_parameters.outputs.repository_owner }}/actions-runner-controller-charts
-
-      - name: Job summary
-        run: |
-          echo "New helm chart for gha-runner-scale-set-controller published successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Parameters:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Ref: ${{ steps.resolve_parameters.outputs.resolvedRef }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Short SHA: ${{ steps.resolve_parameters.outputs.short_sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "- gha-runner-scale-set-controller Chart version: ${{ env.GHA_RUNNER_SCALE_SET_CONTROLLER_CHART_VERSION_TAG }}" >> $GITHUB_STEP_SUMMARY
-
-  publish-helm-chart-gha-runner-scale-set:
-    if: ${{ inputs.publish_gha_runner_scale_set_chart == true }}
-    needs: build-push-image
-    name: Publish Helm chart for gha-runner-scale-set
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          # If inputs.ref is empty, it'll resolve to the default branch
-          ref: ${{ inputs.ref }}
-
-      - name: Resolve parameters 
-        id: resolve_parameters
-        run: |
-          resolvedRef="${{ inputs.ref }}"
-          if [ -z "$resolvedRef" ]
-          then
-            resolvedRef="${{ github.ref }}"
-          fi
-          echo "INFO: Resolving short SHA for $resolvedRef"
-          echo "short_sha=$(git rev-parse --short $resolvedRef)" >> $GITHUB_OUTPUT
-          echo "INFO: Normalizing repository name (lowercase)"
-          echo "repository_owner=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT 
-
-      - name: Set up Helm
-        # Using https://github.com/Azure/setup-helm/releases/tag/v3.5
-        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78
-        with:
-          version: ${{ env.HELM_VERSION }}
-
-      - name: Publish new helm chart for gha-runner-scale-set
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
-
-          GHA_RUNNER_SCALE_SET_CHART_VERSION_TAG=$(cat charts/gha-runner-scale-set/Chart.yaml | grep version: | cut -d " " -f 2)
-          echo "GHA_RUNNER_SCALE_SET_CHART_VERSION_TAG=${GHA_RUNNER_SCALE_SET_CHART_VERSION_TAG}" >> $GITHUB_ENV
-          helm package charts/gha-runner-scale-set/ --version="${GHA_RUNNER_SCALE_SET_CHART_VERSION_TAG}"
-          helm push gha-runner-scale-set-"${GHA_RUNNER_SCALE_SET_CHART_VERSION_TAG}".tgz oci://ghcr.io/${{ steps.resolve_parameters.outputs.repository_owner }}/actions-runner-controller-charts
-
-      - name: Job summary
-        run: |
-          echo "New helm chart for gha-runner-scale-set published successfully!" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Parameters:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Ref: ${{ steps.resolve_parameters.outputs.resolvedRef }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Short SHA: ${{ steps.resolve_parameters.outputs.short_sha }}" >> $GITHUB_STEP_SUMMARY
-          echo "- gha-runner-scale-set Chart version: ${{ env.GHA_RUNNER_SCALE_SET_CHART_VERSION_TAG }}" >> $GITHUB_STEP_SUMMARY

@@ -92,9 +92,6 @@ RUN chmod +x /usr/bin/entrypoint-dind.sh /usr/bin/startup.sh
 # to replace the docker binary in the PATH.
 COPY docker-shim.sh /usr/local/bin/docker
 
-# Configure hooks folder structure.
-COPY hooks /etc/arc/hooks/
-
 VOLUME /var/lib/docker
 
 # Add the Python "User Script Directory" to the PATH

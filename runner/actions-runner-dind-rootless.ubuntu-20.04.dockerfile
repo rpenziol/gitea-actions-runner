@@ -114,9 +114,6 @@ RUN chmod +x /usr/bin/entrypoint-dind-rootless.sh /usr/bin/startup.sh
 # to replace the docker binary in the PATH.
 COPY docker-shim.sh /usr/local/bin/docker
 
-# Configure hooks folder structure.
-COPY hooks /etc/arc/hooks/
-
 # Add the Python "User Script Directory" to the PATH
 ENV PATH="${PATH}:${HOME}/.local/bin:/home/runner/bin"
 ENV ImageOS=ubuntu20

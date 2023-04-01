@@ -118,9 +118,6 @@ COPY entrypoint.sh startup.sh logger.sh graceful-stop.sh update-status /usr/bin/
 # to replace the docker binary in the PATH.
 COPY docker-shim.sh /usr/local/bin/docker
 
-# Configure hooks folder structure.
-COPY hooks /etc/arc/hooks/
-
 # Add the Python "User Script Directory" to the PATH
 ENV PATH="${PATH}:${HOME}/.local/bin/"
 ENV ImageOS=ubuntu20
