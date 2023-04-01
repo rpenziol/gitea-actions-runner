@@ -40,19 +40,6 @@ graceful_stop() {
   done
   log.notice "Observed that the runner has been registered."
 
-  if ! /runner/config.sh remove --token "$RUNNER_TOKEN"; then
-    i=0
-    log.notice "Waiting for RUNNER_GRACEFUL_STOP_TIMEOUT=$RUNNER_GRACEFUL_STOP_TIMEOUT seconds until the runner agent to stop by itself."
-    while [[ $i -lt $RUNNER_GRACEFUL_STOP_TIMEOUT ]]; do
-      sleep 1
-      if ! pgrep Runner.Listener > /dev/null; then
-        log.notice "The runner agent stopped before RUNNER_GRACEFUL_STOP_TIMEOUT=$RUNNER_GRACEFUL_STOP_TIMEOUT"
-        break
-      fi
-      i=$((i+1))
-    done
-  fi
-
   if ! popd; then
     log.error "Failed to popd from ${RUNNER_HOME}"
     exit 1
@@ -88,12 +75,12 @@ graceful_stop() {
   # At the times we didn't have this logic, the runner agent was even unable to output the Cancelled message hence
   # unable to gracefully stop, hence the workflow job hanged like forever.
   log.notice "The actions runner process exited."
-  
+
   if [ "$RUNNER_INIT_PID" != "" ]; then
     log.notice "Holding on until runner init (pid $RUNNER_INIT_PID) exits, so that there will hopefully be no zombie processes remaining."
     # We don't need to kill -TERM $RUNNER_INIT_PID as the init is supposed to exit by itself once the foreground process(=the runner agent) exists.
     wait "$RUNNER_INIT_PID" || :
   fi
-  
+
   log.notice "Graceful stop completed."
 }
