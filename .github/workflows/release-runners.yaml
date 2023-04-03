@@ -13,10 +13,6 @@ env:
   TARGET_ORG: rpenziol
   DOCKER_VERSION: 20.10.23
   RUNNER_CONTAINER_HOOKS_VERSION: 0.2.0
-  NAME: gitea-actions-runner-dind
-  OS_NAME: ubuntu
-  OS_VERSION: 22.04
-  LATEST: "true"
 
 jobs:
   build-runners:
@@ -26,34 +22,34 @@ jobs:
     permissions:
       packages: write
       contents: read
-    # strategy:
-    #   fail-fast: false
-    #   matrix:
-    #     include:
-    #       - name: actions-runner
-    #         os-name: ubuntu
-    #         os-version: 20.04
-    #         latest: "true"
-    #       - name: actions-runner
-    #         os-name: ubuntu
-    #         os-version: 22.04
-    #         latest: "false"
-    #       - name: actions-runner-dind
-    #         os-name: ubuntu
-    #         os-version: 20.04
-    #         latest: "true"
-    #       - name: actions-runner-dind
-    #         os-name: ubuntu
-    #         os-version: 22.04
-    #         latest: "false"
-    #       - name: actions-runner-dind-rootless
-    #         os-name: ubuntu
-    #         os-version: 20.04
-    #         latest: "true"
-    #       - name: actions-runner-dind-rootless
-    #         os-name: ubuntu
-    #         os-version: 22.04
-    #         latest: "false"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: gitea-actions-runner
+            os-name: ubuntu
+            os-version: 20.04
+            latest: "true"
+          - name: gitea-actions-runner
+            os-name: ubuntu
+            os-version: 22.04
+            latest: "false"
+          - name: gitea-actions-runner-dind
+            os-name: ubuntu
+            os-version: 20.04
+            latest: "true"
+          - name: gitea-actions-runner-dind
+            os-name: ubuntu
+            os-version: 22.04
+            latest: "false"
+          - name: gitea-actions-runner-dind-rootless
+            os-name: ubuntu
+            os-version: 20.04
+            latest: "true"
+          - name: gitea-actions-runner-dind-rootless
+            os-name: ubuntu
+            os-version: 22.04
+            latest: "false"
 
     steps:
       - uses: actions/checkout@v3
@@ -69,10 +65,10 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./runner
-          file: ./runner/${{ env.NAME }}.${{env.OS_NAME}}-${{ env.OS_VERSION }}.dockerfile
-          push: true
+          file: ./runner/${{ matrix.name }}.${{ matrix.os-name }}-${{ matrix.os-version }}.dockerfile
+          push: ${{ env.PUSH_TO_REGISTRIES }}
           build-args: |
             DOCKER_VERSION=${{ env.DOCKER_VERSION }}
             RUNNER_CONTAINER_HOOKS_VERSION=${{ env.RUNNER_CONTAINER_HOOKS_VERSION }}
           tags: |
-            ghcr.io/${{ env.TARGET_ORG }}/${{ env.NAME }}:${{ env.OS_NAME }}-${{ env.OS_VERSION }}
+            ghcr.io/${{ env.TARGET_ORG }}/${{ matrix.name }}:${{ matrix.os-name }}-${{ matrix.os-version }}
