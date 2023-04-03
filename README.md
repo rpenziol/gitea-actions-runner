@@ -10,13 +10,13 @@ This is a project forked from [actions/actions-runner-controller](https://github
 - [gitea-actions-runner-dind](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner%2Fgitea-actions-runner-dind): Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps
 - [gitea-actions-runner-dind-rootless](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner%2Fgitea-actions-runner-dind-rootless) (coming soon): Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps, running as non-root user
 
-For now only amd64 images based on Ubuntu 22.04 have been published. This project will strive to support all images defined in **actions/actions-runner-controller**. This consists of the containers listed above, based on Ubuntu 20.04 and Ubuntu 22.04 for amd64 and arm64 platforms.
+For now only amd64 images have been published. This project will strive to support all images defined in **actions/actions-runner-controller**. This consists of the containers listed above, based on Ubuntu 20.04 and Ubuntu 22.04 for amd64 and arm64 platforms.
 
 ## Getting Started
 
 Follow Gitea's initial getting started guide for Gitea Actions [https://blog.gitea.io/2023/03/hacking-on-gitea-actions/](https://blog.gitea.io/2023/03/hacking-on-gitea-actions/)
 
-### Kuberentes
+### Kubernetes
 
 Tailor of the template below to meet your needs. As-is this will create a Gitea Runner pod in Kubernetes that will allow you to run Gitea Actions with Docker steps.
 
