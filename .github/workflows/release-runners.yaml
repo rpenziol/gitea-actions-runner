@@ -12,7 +12,6 @@ env:
   PUSH_TO_REGISTRIES: true
   TARGET_ORG: rpenziol
   DOCKER_VERSION: 20.10.23
-  RUNNER_CONTAINER_HOOKS_VERSION: 0.2.0
 
 jobs:
   build-runners:
@@ -69,6 +68,5 @@ jobs:
           push: ${{ env.PUSH_TO_REGISTRIES }}
           build-args: |
             DOCKER_VERSION=${{ env.DOCKER_VERSION }}
-            RUNNER_CONTAINER_HOOKS_VERSION=${{ env.RUNNER_CONTAINER_HOOKS_VERSION }}
           tags: |
             ghcr.io/${{ env.TARGET_ORG }}/${{ matrix.name }}:${{ matrix.os-name }}-${{ matrix.os-version }}

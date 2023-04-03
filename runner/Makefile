@@ -7,7 +7,6 @@ OS_IMAGE ?= ubuntu-22.04
 TARGETPLATFORM ?= $(shell arch)
 
 RUNNER_VERSION ?= 2.303.0
-RUNNER_CONTAINER_HOOKS_VERSION ?= 0.2.0
 DOCKER_VERSION ?= 20.10.23
 
 # default list of platforms for which multiarch image is built
@@ -43,40 +42,36 @@ docker-build-set: check-target-platform
 	${DOCKER} build \
 	  --build-arg TARGETPLATFORM=${TARGETPLATFORM} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner.${OS_IMAGE}.dockerfile \
 	  -t ${DEFAULT_RUNNER_NAME}:${OS_IMAGE} .
 	${DOCKER} build \
 	  --build-arg TARGETPLATFORM=${TARGETPLATFORM} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner-dind.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner-dind.${OS_IMAGE}.dockerfile \
 	  -t ${DIND_RUNNER_NAME}:${OS_IMAGE} .
 	${DOCKER} build \
 	  --build-arg TARGETPLATFORM=${TARGETPLATFORM} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner-dind-rootless.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner-dind-rootless.${OS_IMAGE}.dockerfile \
 	  -t "${DIND_ROOTLESS_RUNNER_NAME}:${OS_IMAGE}" .
 
 docker-build-default: check-target-platform
 	${DOCKER} build \
 	  --build-arg TARGETPLATFORM=${TARGETPLATFORM} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner.${OS_IMAGE}.dockerfile \
 	  -t ${DEFAULT_RUNNER_NAME}:${OS_IMAGE} .
 
 docker-build-dind: check-target-platform
 	${DOCKER} build \
 	  --build-arg TARGETPLATFORM=${TARGETPLATFORM} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner-dind.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner-dind.${OS_IMAGE}.dockerfile \
 	  -t ${DIND_RUNNER_NAME}:${OS_IMAGE} .
 
 docker-push-default:
@@ -98,23 +93,20 @@ docker-buildx-set:
 	fi
 	${DOCKER} buildx build --platform ${PLATFORMS} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner.${OS_IMAGE}.dockerfile \
 	  -t "${DEFAULT_RUNNER_NAME}:${OS_IMAGE}" \
 	  . ${PUSH_ARG}
 	${DOCKER} buildx build --platform ${PLATFORMS} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner-dind.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner-dind.${OS_IMAGE}.dockerfile \
 	  -t "${DIND_RUNNER_NAME}:${OS_IMAGE}" \
 	  . ${PUSH_ARG}
 	${DOCKER} buildx build --platform ${PLATFORMS} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner-dind-rootless.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner-dind-rootless.${OS_IMAGE}.dockerfile \
 	  -t "${DIND_ROOTLESS_RUNNER_NAME}:${OS_IMAGE}" \
 	  . ${PUSH_ARG}
 
@@ -126,9 +118,8 @@ docker-buildx-default:
 	fi
 	${DOCKER} buildx build --platform ${PLATFORMS} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner.${OS_IMAGE}.dockerfile \
 	  -t "${DEFAULT_RUNNER_NAME}:${OS_IMAGE}" \
 	  . ${PUSH_ARG}
 
@@ -140,9 +131,8 @@ docker-buildx-dind:
 	fi
 	${DOCKER} buildx build --platform ${PLATFORMS} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner-dind.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner-dind.${OS_IMAGE}.dockerfile \
 	  -t "${DIND_RUNNER_NAME}:${OS_IMAGE}" \
 	  . ${PUSH_ARG}
 
@@ -154,8 +144,7 @@ docker-buildx-dind-rootless:
 	fi
 	${DOCKER} buildx build --platform ${PLATFORMS} \
 	  --build-arg RUNNER_VERSION=${RUNNER_VERSION} \
-	  --build-arg RUNNER_CONTAINER_HOOKS_VERSION=${RUNNER_CONTAINER_HOOKS_VERSION} \
 	  --build-arg DOCKER_VERSION=${DOCKER_VERSION} \
-	  -f actions-runner-dind-rootless.${OS_IMAGE}.dockerfile \
+	  -f gitea-actions-runner-dind-rootless.${OS_IMAGE}.dockerfile \
 	  -t "${DIND_ROOTLESS_RUNNER_NAME}:${OS_IMAGE}" \
 	  . ${PUSH_ARG}
