@@ -1,28 +1,28 @@
-# Gitea Actions Runner
-
-This is a project forked from [actions/actions-runner-controller](https://github.com/actions/actions-runner-controller) and incorporates code from [actions-runner-controller/releases](https://github.com/actions-runner-controller/releases)
+# Gitea Actions runner
 
 ## About
 
-**gitea-actions-runner** defines a set of containers that act as Gitea Runners. There are 3 main variants of the container:
+**gitea-actions-runner** was created to produce [self-hosted Gitea Actions runner](https://gitea.com/gitea/act_runner) container images. This project is forked from [actions/actions-runner-controller](https://github.com/actions/actions-runner-controller) and incorporates code from [actions-runner-controller/releases](https://github.com/actions-runner-controller/releases).
+
+There are 3 main variants of the image, each available for amd64 and arm64:
 
 ### 1. [gitea-actions-runner](https://github.com/users/rpenziol/packages/container/package/gitea-actions-runner)
 
-Description: Base container with Gitea Actions Runner
+Base image with Gitea Actions runner.
 
-Image: `ghcr.io/rpenziol/gitea-actions-runner`
+> `ghcr.io/rpenziol/gitea-actions-runner`
 
 ### 2. [gitea-actions-runner-dind](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner-dind)
 
-Description: Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps.
+Image with Gitea Actions runner and Docker-in-Docker. Compatible with workflows with Docker steps. Does not require Docker socket to be mounted.
 
-Image: `ghcr.io/rpenziol/gitea-actions-runner-dind`
+> `ghcr.io/rpenziol/gitea-actions-runner-dind`
 
 ### 3. [gitea-actions-runner-dind-rootless](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner-dind-rootless) (coming soon)
 
-Description: Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps, running as non-root user.
+Image with Gitea Actions runner and Docker-in-Docker. Compatible with workflows with Docker steps. Container runs as non-root user.
 
-Image: `ghcr.io/rpenziol/gitea-actions-runner-dind-rootless`
+> `ghcr.io/rpenziol/gitea-actions-runner-dind-rootless`
 
 ## Getting Started
 
@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
       - name: runner
-        image: ghcr.io/rpenziol/gitea-actions-runner/gitea-actions-runner-dind:ubuntu-22.04
+        image: ghcr.io/rpenziol/gitea-actions-runner-dind
         volumeMounts:
         - mountPath: /.runner
           name: gitea-runner-configmap
