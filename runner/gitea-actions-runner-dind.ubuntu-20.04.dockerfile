@@ -71,25 +71,19 @@ RUN export ARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
 
 ENV RUNNER_ASSETS_DIR=/runnertmp
 RUN export ARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
-    && if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "i386" ]; then export ARCH=x64 ; fi \
-    && mkdir -p "$RUNNER_ASSETS_DIR" \
-    && cd "$RUNNER_ASSETS_DIR" \
-    && curl -fLo runner.tar.gz https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-${ARCH}-${RUNNER_VERSION}.tar.gz \
-    && tar xzf ./runner.tar.gz \
-    && rm -f runner.tar.gz \
-    && ./bin/installdependencies.sh \
-    # libyaml-dev is required for ruby/setup-ruby action.
-    # It is installed after installdependencies.sh and before removing /var/lib/apt/lists
-    # to avoid rerunning apt-update on its own.
-    && apt-get install -y libyaml-dev \
-    && rm -rf /var/lib/apt/lists/*
+    && if [ "$ARCH" = "arm64" ]; then export ARCH=arm64 ; fi \
+    && if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "i386" ]; then export ARCH=amd64 ; fi \
+    && curl -fLo runner https://dl.gitea.com/act_runner/main/act_runner-main-linux-${ARCH} \
+    && chmod +x runner
 
 ENV RUNNER_TOOL_CACHE=/opt/hostedtoolcache
 RUN mkdir /opt/hostedtoolcache \
     && chgrp docker /opt/hostedtoolcache \
     && chmod g+rwx /opt/hostedtoolcache
 
-RUN cd "$RUNNER_ASSETS_DIR" \
+ENV RUNNER_ASSETS_DIR=/runnertmp
+RUN mkdir -p "$RUNNER_ASSETS_DIR" \
+    && cd "$RUNNER_ASSETS_DIR" \
     && curl -fLo runner-container-hooks.zip https://github.com/actions/runner-container-hooks/releases/download/v${RUNNER_CONTAINER_HOOKS_VERSION}/actions-runner-hooks-k8s-${RUNNER_CONTAINER_HOOKS_VERSION}.zip \
     && unzip ./runner-container-hooks.zip -d ./k8s \
     && rm -f runner-container-hooks.zip

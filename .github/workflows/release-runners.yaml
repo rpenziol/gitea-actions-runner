@@ -59,7 +59,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ env.TARGET_ORG }}
-          password: ${{ secrets.PASSWORD }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Export env vars
         run: |
