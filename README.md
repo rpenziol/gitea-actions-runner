@@ -6,11 +6,23 @@ This is a project forked from [actions/actions-runner-controller](https://github
 
 **gitea-actions-runner** defines a set of containers that act as Gitea Runners. There are 3 main variants of the container:
 
-- [gitea-actions-runner](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner%2Fgitea-actions-runner): Base container with Gitea Actions Runner
-- [gitea-actions-runner-dind](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner%2Fgitea-actions-runner-dind): Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps
-- [gitea-actions-runner-dind-rootless](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner%2Fgitea-actions-runner-dind-rootless) (coming soon): Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps, running as non-root user
+### 1. [gitea-actions-runner](https://github.com/users/rpenziol/packages/container/package/gitea-actions-runner)
 
-For now only amd64 images have been published. This project will strive to support all images defined in **actions/actions-runner-controller**. This consists of the containers listed above, based on Ubuntu 20.04 and Ubuntu 22.04 for amd64 and arm64 platforms.
+Description: Base container with Gitea Actions Runner
+
+Image: `ghcr.io/rpenziol/gitea-actions-runner`
+
+### 2. [gitea-actions-runner-dind](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner-dind)
+
+Description: Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps.
+
+Image: `ghcr.io/rpenziol/gitea-actions-runner-dind`
+
+### 3. [gitea-actions-runner-dind-rootless](https://github.com/rpenziol/gitea-actions-runner/pkgs/container/gitea-actions-runner-dind-rootless) (coming soon)
+
+Description: Container with Gitea Actions Runner and Docker-in-Docker, for workflows with Docker steps, running as non-root user.
+
+Image: `ghcr.io/rpenziol/gitea-actions-runner-dind-rootless`
 
 ## Getting Started
 

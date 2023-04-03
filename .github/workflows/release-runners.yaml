@@ -13,12 +13,12 @@ env:
   TARGET_ORG: rpenziol
   TARGET_REPO: gitea-actions-runner
   DOCKER_VERSION: 20.10.23
+  BUILDX_NO_DEFAULT_ATTESTATIONS: 1
 
 jobs:
   build-runners:
     name: Trigger Build and Push of Runner Images
     runs-on: ubuntu-latest
-    container: catthehacker/ubuntu:act-latest
     permissions:
       packages: write
       contents: read
@@ -54,6 +54,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -63,19 +69,19 @@ jobs:
 
       - name: Export env vars
         run: |
-            echo "SHA_SHORT=$(git -C $GITHUB_WORKSPACE rev-parse --short HEAD)" >> $GITHUB_ENV
-            echo "LATEST_TAG_GHCR=ghcr.io/${{ env.TARGET_ORG }}/${{ env.TARGET_REPO }}/${{ matrix.name }}:latest" >> $GITHUB_ENV
+            echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+            echo "LATEST_TAG_GHCR=ghcr.io/${{ env.TARGET_ORG }}/${{ matrix.name }}:latest" >> $GITHUB_ENV
 
       - name: Build and Push Versioned Tags
         uses: docker/build-push-action@v4
         with:
           context: ./runner
           file: ./runner/${{ matrix.name }}.${{ matrix.os-name }}-${{ matrix.os-version }}.dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: ${{ env.PUSH_TO_REGISTRIES }}
           build-args: |
             DOCKER_VERSION=${{ env.DOCKER_VERSION }}
           tags: |
-            ghcr.io/${{ env.TARGET_ORG }}/${{ env.TARGET_REPO }}/${{ matrix.name }}:${{ matrix.os-name }}-${{ matrix.os-version }}
-            ghcr.io/${{ env.TARGET_ORG }}/${{ env.TARGET_REPO }}/${{ matrix.name }}:${{ matrix.os-name }}-${{ matrix.os-version }}-${{ env.SHA_SHORT }}
+            ghcr.io/${{ env.TARGET_ORG }}/${{ matrix.name }}:${{ matrix.os-name }}-${{ matrix.os-version }}
+            ghcr.io/${{ env.TARGET_ORG }}/${{ matrix.name }}:${{ matrix.os-name }}-${{ matrix.os-version }}-${{ env.SHA_SHORT }}
             ${{ matrix.latest == 'true' && env.LATEST_TAG_GHCR || '' }}
