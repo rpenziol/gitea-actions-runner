@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 ARG TARGETPLATFORM
-ARG RUNNER_VERSION
+ARG RUNNER_VERSION=0.2.0
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.2.0
 # Docker and Docker Compose arguments
 ARG CHANNEL=stable
@@ -45,7 +45,7 @@ RUN export ARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
 RUN export ARCH=$(echo ${TARGETPLATFORM} | cut -d / -f2) \
     && if [ "$ARCH" = "arm64" ]; then export ARCH=arm64 ; fi \
     && if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "x86_64" ] || [ "$ARCH" = "i386" ]; then export ARCH=amd64 ; fi \
-    && curl -fLo runner https://dl.gitea.com/act_runner/main/act_runner-main-linux-${ARCH} \
+    && curl -fLo runner https://dl.gitea.com/act_runner/${RUNNER_VERSION}/act_runner-${RUNNER_VERSION}-linux-${ARCH} \
     && chmod +x runner
 
 ENV RUNNER_TOOL_CACHE=/opt/hostedtoolcache
